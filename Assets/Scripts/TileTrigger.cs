@@ -23,7 +23,7 @@ public class TileTrigger : MonoBehaviour
         //Debug.Log("TILE " + this.name + " CLICKED");
         if (isWalkable() && GameController.isPlayerTurn())
             // Gets the players array and changes the pos of the currState index
-            Map.players[(int)GameController.currState].changePos (new Vector3 (this.transform.position.x, this.transform.position.y, -3));
+            Map.players[(int)GameController.currState].update.updatePosition (new Vector3 (this.transform.position.x, this.transform.position.y, -3));
     }
 
     // Checks tiletypes to see if that tile is able to be walked on

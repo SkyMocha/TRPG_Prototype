@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using Game.Tile;
 
@@ -17,6 +18,7 @@ public class Map : MonoBehaviour
     Texture2D[] spriteSheetTextures;
     public static Player[] players;
     public static Enemy[] enemies;
+    public static object[] turnOrder;
 
     // Start is called before the first frame update
     void Start()
@@ -133,8 +135,8 @@ public class Map : MonoBehaviour
     // Gets a random valid position on the map
     Vector3 randomPos()
     {
-        int x = (int)Random.Range(10, tiles.GetLength(0));
-        int y = (int)Random.Range(10, tiles.GetLength(1));
+        int x = (int)UnityEngine.Random.Range(10, tiles.GetLength(0));
+        int y = (int)UnityEngine.Random.Range(10, tiles.GetLength(1));
         if (tiles[x, y].id == -1)
             return randomPos();
         if (tiles[x, y].isWalkable())
@@ -152,7 +154,9 @@ public class Map : MonoBehaviour
         players[3] = new Player(playerStarts[3], 3);
         enemies[0] = new Enemy(randomPos());
 
-        updateFogOfWar();
+        turnOrder = getTurnOrder();
+        printTurnOrder();
+        //updateFogOfWar();
     }
 
     // Checks to see if one Vector3 is inside the circle of another Vector3
@@ -164,10 +168,10 @@ public class Map : MonoBehaviour
     // Checks to see if all unitys are within a circle
     public static bool inCircleForAll (Vector3 target, int radius) {
         foreach (Player p in players) {
-            if (!inCircle(p.update.curr_pos, target, radius))
-                return false;
+            if (inCircle(p.update.curr_pos, target, radius))
+                return true;
         }
-        return true;
+        return false;
     }
 
     // Goes from a unit in Unity to coords on the tiles
@@ -207,5 +211,68 @@ public class Map : MonoBehaviour
                 e.getController().hide();
             }
         }
+    }
+
+    // Gets the turn order based on initiative
+    public static object[] getTurnOrder () {
+        object[] entities = new object[players.Length + enemies.Length];
+        Player[] sortedPlayers = newPlayerArray(players);
+        Array.Sort(sortedPlayers, new Comparison<Player>((p1, p2) => p2.update.CompareTo(p1)));
+        Enemy[] sortedEnemies = newEnemyArray(enemies);
+        Array.Sort(sortedEnemies, new Comparison<Enemy>((p1, p2) => p2.getController().CompareTo(p1)));
+        entities = mergeArrays(sortedPlayers, sortedEnemies);
+        return entities;
+    }
+
+    // Used to copy an existing player array onto a new player array for get turn order
+    public static Player[] newPlayerArray (Player[] p) {
+        Player[] newP = new Player[p.Length];
+        for (int i = 0; i < p.Length; i++) {
+            newP[i] = p[i];
+        }
+        return newP;
+    }
+    // Used to copy an existing enemy array onto a new enemy array for get turn order
+    public static Enemy[] newEnemyArray(Enemy[] e)
+    {
+        Enemy[] newE = new Enemy[e.Length];
+        for (int i = 0; i < e.Length; i++)
+        {
+            newE[i] = e[i];
+        }
+        return newE;
+    }
+
+    public static void printTurnOrder () {
+        string s = "";
+        foreach (object obj in turnOrder) {
+            s += obj.GetType() + " ";
+        }
+        Debug.Log(s);
+    }
+
+    // Shamelessly taken (and modified obviously) from GeeksforGeeks
+    public static object[] mergeArrays(Player[] arr1, Enemy[] arr2)
+    {
+        int i = 0, j = 0, k = 0;
+        int n1 = arr1.Length;
+        int n2 = arr2.Length;
+        object[] arr3 = new object[n1 + n2];
+
+        while (i < n1 && j < n2)
+        {
+            if (arr1[i].update.initiative > arr2[j].getController().initiative)
+                arr3[k++] = arr2[j++];
+            else
+                arr3[k++] = arr1[i++];
+        }
+
+        while (i < n1)
+            arr3[k++] = arr1[i++];
+
+        while (j < n2)
+            arr3[k++] = arr2[j++];
+
+        return arr3;
     }
 }

@@ -10,6 +10,7 @@ public class PlayerUpdate : MonoBehaviour
     public Vector3 curr_pos;
     public Player player;
     public int moveRadius;
+    public int initiative;
 
     private void Start()
     {
@@ -20,13 +21,30 @@ public class PlayerUpdate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log(id);
     }
 
-    public void updatePosition () {
+    public void updatePosition (Vector3 pos) {
         Debug.Log("MOVING PLAYER " + id);
-        playerObject.transform.position = curr_pos;
-        GameController.nextTurn();
+
+        if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius))
+        {
+            curr_pos = pos;
+            playerObject.transform.position = curr_pos;
+
+            Map.updateFogOfWar();
+            GameController.nextTurn();
+        }
+    }
+
+    public int CompareTo(Player two)
+    {
+        if (initiative > two.initiative)
+            return 1;
+        else if (initiative == two.initiative)
+            return 0;
+        else
+            return -1;
     }
 
 }

@@ -11,6 +11,8 @@ public class EnemyController : MonoBehaviour
     SpriteRenderer spriteRenderer;
     bool inView;
 
+    public int initiative;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +24,7 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         updatePos();
+        //if (GameController.isEnemyTurn())
     }
 
     void updatePos () {
@@ -38,7 +41,17 @@ public class EnemyController : MonoBehaviour
     // Hides the tile for fog of war purposes
     public void hide()
     {
-        spriteRenderer.color = new Color(color.r, color.g, color.b, 0f);
+        //spriteRenderer.color = new Color(color.r, color.g, color.b, 0f);
         inView = false;
+    }
+
+    public int CompareTo(Enemy two)
+    {
+        if (initiative > two.getController().initiative)
+            return 1;
+        else if (initiative == two.getController().initiative)
+            return 0;
+        else
+            return -1;
     }
 }

@@ -13,6 +13,10 @@ public class Enemy : MonoBehaviour
     GameObject enemyObject;
     EnemyController enemy;
 
+    public int initiative = 1;
+
+    public bool isPlayer = false;
+
     public Enemy(Vector3 pos, int tId)
     {
         enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemy");

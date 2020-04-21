@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     public MoveSphere moveSphere;
     public int id;
     public PlayerUpdate update;
+    public int initiative = 5;
+    //bool isPlayer = true;
 
     public Player(Vector3 pos, int tId) {
         playerPrefab = Resources.Load<GameObject>("Prefabs/Player"); // Loads the player prefab
@@ -50,14 +52,16 @@ public class Player : MonoBehaviour
     }
 
     // Changes the players position if it is their turn
-    public void changePos (Vector3 pos){
-        if (GameController.isPlayerTurn(update.player.id) && Map.inCircle (update.curr_pos, pos, update.moveRadius))
-        {
-            update.curr_pos = pos;
-            update.updatePosition();
-            Map.updateFogOfWar();
-        }
-    }
+    //public void changePos (Vector3 pos){
+        // PASSING ID OF 0 WHEN IT SHOULD BE 3
+        //Debug.Log(update.id);
+        //if (GameController.isPlayerTurn(update.id) && Map.inCircle (update.curr_pos, pos, update.moveRadius))
+        //{
+        //    update.curr_pos = pos;
+        //    update.updatePosition();
+        //    Map.updateFogOfWar();
+        //}
+    //}
 
     public GameObject getPlayer () {
         return playerObject;
