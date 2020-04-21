@@ -11,6 +11,7 @@ public class PlayerUpdate : MonoBehaviour
     public Player player;
     public int moveRadius;
     public int initiative;
+    public SpriteRenderer spriteRenderer;
 
     private void Start()
     {
@@ -21,7 +22,6 @@ public class PlayerUpdate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(id);
     }
 
     public void updatePosition (Vector3 pos) {

@@ -43,6 +43,8 @@ public class Player : MonoBehaviour
 
         update.curr_pos = pos;
 
+        update.spriteRenderer = playerObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+
     }
 
     // Use this for initialization

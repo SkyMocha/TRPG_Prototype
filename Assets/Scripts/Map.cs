@@ -12,7 +12,6 @@ public class Map : MonoBehaviour
     [SerializeField] Vector3[] playerStarts;
     public static int tileSize = 8;
     Texture2D[,] tileTextures;
-    int tile_sheet_size = 164;
     public static Tile[,] tiles;
     Sprite[] spriteSheetSprites;
     Texture2D[] spriteSheetTextures;
@@ -35,6 +34,8 @@ public class Map : MonoBehaviour
         spriteSheetTextures = spriteSheetToTextures(spriteSheetSprites);
         loadMapTiles();
         loadEntities();
+        updateFogOfWar();
+        UI.instantiateEntities();
     }
 
     void startsToCoords()
@@ -156,7 +157,6 @@ public class Map : MonoBehaviour
 
         turnOrder = getTurnOrder();
         printTurnOrder();
-        //updateFogOfWar();
     }
 
     // Checks to see if one Vector3 is inside the circle of another Vector3

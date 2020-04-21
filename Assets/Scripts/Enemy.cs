@@ -29,6 +29,8 @@ public class Enemy : MonoBehaviour
         enemy.id = tId;
         enemy.curr_pos = pos;
 
+        enemy.spriteRenderer = enemyObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+
     }
 
     public Enemy(Vector3 pos)
@@ -42,6 +44,8 @@ public class Enemy : MonoBehaviour
 
         enemy.id = (int)EnemyTypes.Elemental;
         enemy.curr_pos = pos;
+
+        enemy.spriteRenderer = enemyObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
 
     }
 

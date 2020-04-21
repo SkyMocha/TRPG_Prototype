@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
     public int id;
 
     Color color;
-    SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     bool inView;
 
     public int initiative;
@@ -17,7 +17,6 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         color = gameObject.GetComponent<SpriteRenderer>().color;
-        spriteRenderer = gameObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
     }
 
     // Update is called once per frame
