@@ -27,18 +27,18 @@ public class CameraController : MonoBehaviour
         }
         // Moves the camera with WASD
         else if (wasdPressed() && GameController.isPlayerTurn()) {
-            if (Input.GetKeyDown(KeyCode.W)) {
+            if (Input.GetKey(KeyCode.W)) {
                 move(new Vector3( transform.position.x, transform.position.y + cameraSpeed, -10));
             }
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKey(KeyCode.A))
             {
                 move(new Vector3(transform.position.x - cameraSpeed, transform.position.y, -10));
             }
-            if (Input.GetKeyDown(KeyCode.S))
+            if (Input.GetKey(KeyCode.S))
             {
                 move(new Vector3(transform.position.x, transform.position.y - cameraSpeed, -10));
             }
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKey(KeyCode.D))
             {
                 move(new Vector3(transform.position.x + cameraSpeed, transform.position.y, -10));
             }

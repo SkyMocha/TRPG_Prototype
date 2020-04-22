@@ -45,6 +45,12 @@ public class Player : MonoBehaviour
 
         update.spriteRenderer = playerObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
 
+        loadSprites();
+    }
+
+    void loadSprites () {
+        if (update.id == 0)
+            update.spriteRenderer.sprite = Resources.Load<Sprite>("CustomAssets/Players/Player_0_Idle");
     }
 
     // Use this for initialization

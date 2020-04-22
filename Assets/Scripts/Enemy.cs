@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
         enemy.curr_pos = pos;
 
         enemy.spriteRenderer = enemyObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
-
+        
     }
 
     public Enemy(Vector3 pos)

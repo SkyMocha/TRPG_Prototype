@@ -71,6 +71,11 @@ namespace Game.Tile
             inView = false;
         }
 
+        // Illuminates the tile in green
+        public void illuminate () {
+            spriteRenderer.color = new Color(0.58f, 1f, 0.71f);
+        }
+
     }
 
 }

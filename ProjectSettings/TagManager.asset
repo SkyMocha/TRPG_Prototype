@@ -8,6 +8,7 @@ TagManager:
   - MoveSphere
   - Map
   - UI
+  - Logs
   layers:
   - Default
   - TransparentFX

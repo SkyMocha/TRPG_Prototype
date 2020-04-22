@@ -18,6 +18,7 @@ public class Map : MonoBehaviour
     public static Player[] players;
     public static Enemy[] enemies;
     public static object[] turnOrder;
+    public Logs logs;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class Map : MonoBehaviour
         players = new Player[4];
         startsToCoords();
 
-        enemies = new Enemy[1];
+        enemies = new Enemy[4];
 
         map_image = Resources.Load<Texture2D>("Maps/" + map_number);
         spriteSheetSprites = Resources.LoadAll<Sprite>("TileMaps/galletcity_tiles");
@@ -36,6 +37,12 @@ public class Map : MonoBehaviour
         loadEntities();
         updateFogOfWar();
         UI.instantiateEntities();
+        logs = new Logs();
+        //Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, once seeming to bustle with life.");
+        Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, " +
+                      "once seeming to bustle with life." +
+                      "Ooze eminates from the roads as though clearly something has happened to this once great city." +
+                      "You choose to begin your investigation of this metropolis, guns drawn.");
     }
 
     void startsToCoords()
@@ -154,6 +161,9 @@ public class Map : MonoBehaviour
         players[2] = new Player(playerStarts[2], 2);
         players[3] = new Player(playerStarts[3], 3);
         enemies[0] = new Enemy(randomPos());
+        enemies[1] = new Enemy(randomPos());
+        enemies[2] = new Enemy(randomPos());
+        enemies[3] = new Enemy(randomPos());
 
         turnOrder = getTurnOrder();
         printTurnOrder();
@@ -166,8 +176,10 @@ public class Map : MonoBehaviour
     }
 
     // Checks to see if all unitys are within a circle
-    public static bool inCircleForAll (Vector3 target, int radius) {
-        foreach (Player p in players) {
+    public static bool inCircleForAll(Vector3 target, int radius)
+    {
+        foreach (Player p in players)
+        {
             if (inCircle(p.update.curr_pos, target, radius))
                 return true;
         }
@@ -175,17 +187,19 @@ public class Map : MonoBehaviour
     }
 
     // Goes from a unit in Unity to coords on the tiles
-    public static float toCoord (float i)
+    public static float toCoord(float i)
     {
         return i * 12.5f;
     }
     // Goes from a coord on the coords to a unit in Unity
-    public static float toUnit(float i){
+    public static float toUnit(float i)
+    {
         return i * 0.08f;
     }
 
     // Updates the fog of war for all entities
-    public static void updateFogOfWar () {
+    public static void updateFogOfWar()
+    {
         foreach (Tile t in tiles)
         {
             if (t.id != -1)
@@ -202,11 +216,11 @@ public class Map : MonoBehaviour
         }
         foreach (Enemy e in enemies)
         {
-            if (inCircleForAll(e.getController().curr_pos, 12))
+            if (!e.getController().isDead() && inCircleForAll(e.getController().curr_pos, 12))
             {
                 e.getController().show();
             }
-            else
+            else if (!e.getController().isDead())
             {
                 e.getController().hide();
             }
@@ -214,7 +228,8 @@ public class Map : MonoBehaviour
     }
 
     // Gets the turn order based on initiative
-    public static object[] getTurnOrder () {
+    public static object[] getTurnOrder()
+    {
         object[] entities = new object[players.Length + enemies.Length];
         Player[] sortedPlayers = newPlayerArray(players);
         Array.Sort(sortedPlayers, new Comparison<Player>((p1, p2) => p2.update.CompareTo(p1)));
@@ -225,9 +240,11 @@ public class Map : MonoBehaviour
     }
 
     // Used to copy an existing player array onto a new player array for get turn order
-    public static Player[] newPlayerArray (Player[] p) {
+    public static Player[] newPlayerArray(Player[] p)
+    {
         Player[] newP = new Player[p.Length];
-        for (int i = 0; i < p.Length; i++) {
+        for (int i = 0; i < p.Length; i++)
+        {
             newP[i] = p[i];
         }
         return newP;
@@ -243,12 +260,14 @@ public class Map : MonoBehaviour
         return newE;
     }
 
-    public static void printTurnOrder () {
+    // Prints the turn order for debugging
+    public static void printTurnOrder()
+    {
         string s = "";
-        foreach (object obj in turnOrder) {
+        foreach (object obj in turnOrder)
+        {
             s += obj.GetType() + " ";
         }
-        Debug.Log(s);
     }
 
     // Shamelessly taken (and modified obviously) from GeeksforGeeks
@@ -274,5 +293,19 @@ public class Map : MonoBehaviour
             arr3[k++] = arr2[j++];
 
         return arr3;
+    }
+
+    // Draws a radius around a specific point
+    public static void drawRadius(Vector3 pos) {
+        foreach (Tile t in tiles)
+        {
+            if (t.id != -1)
+            {
+                if (inCircle(pos, t.gameObject.transform.position, 8))
+                {
+                    t.illuminate();
+                }
+            }
+        }
     }
 }

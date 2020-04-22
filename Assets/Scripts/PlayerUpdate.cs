@@ -11,6 +11,7 @@ public class PlayerUpdate : MonoBehaviour
     public Player player;
     public int moveRadius;
     public int initiative;
+    public int order;
     public SpriteRenderer spriteRenderer;
 
     private void Start()
@@ -22,6 +23,7 @@ public class PlayerUpdate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        actionHandler();
     }
 
     public void updatePosition (Vector3 pos) {
@@ -34,6 +36,31 @@ public class PlayerUpdate : MonoBehaviour
 
             Map.updateFogOfWar();
             GameController.nextTurn();
+        }
+    }
+
+    public bool isActionable () {
+        return GameController.isPlayerTurn(id) || GameController.isShooting();
+    }
+
+    public void actionHandler () {
+        if (isActionable())
+        {
+            // Does the player want to shoot?
+            if (Input.GetKeyDown(KeyCode.E) && !GameController.isShooting())
+            {
+                Map.drawRadius(curr_pos);
+                GameController.setShooting();
+                Debug.Log("SHOOT");
+            }
+            // Does the player want to cancel a shot?
+            else if (Input.GetKeyDown(KeyCode.Escape) && GameController.isShooting())
+            {
+                Map.updateFogOfWar();
+                GameController.cancelShooting();
+                Debug.Log("CANCEL SHOOT");
+            }
+
         }
     }
 
