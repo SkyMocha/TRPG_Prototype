@@ -10,7 +10,7 @@ namespace Game.Tile
         public GameObject gameObject;
         Texture2D objectTexture;
         public int id;
-        int x, y;
+        public int x, y;
         //Transform transform;
         BoxCollider2D boxCollider;
         TileTrigger triggerScript;

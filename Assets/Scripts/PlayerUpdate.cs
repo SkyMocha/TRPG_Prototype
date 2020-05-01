@@ -12,7 +12,9 @@ public class PlayerUpdate : MonoBehaviour
     public int moveRadius;
     public int initiative;
     public int order;
+    public int health = 20;
     public SpriteRenderer spriteRenderer;
+    public bool dead;
 
     private void Start()
     {
@@ -29,7 +31,7 @@ public class PlayerUpdate : MonoBehaviour
     public void updatePosition (Vector3 pos) {
         Debug.Log("MOVING PLAYER " + id);
 
-        if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius))
+        if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius) && Map.inAStar(curr_pos, pos, moveRadius))
         {
             curr_pos = pos;
             playerObject.transform.position = curr_pos;
@@ -64,6 +66,28 @@ public class PlayerUpdate : MonoBehaviour
         }
     }
 
+    public void damage (int amount) {
+        health -= amount;
+        if (health <= 0)
+            destroyPlayer();
+    }
+
+    public void destroyPlayer () {
+        dead = true;
+        Destroy(playerObject);
+        UI.destroyCard(order);
+        Logs.addEntry("Player " + name + " down!");
+    }
+
+    public void OnMouseOver()
+    {
+        UI.showEntity(this);
+    }
+    public void OnMouseExit()
+    {
+        UI.removeEntityCard();
+    }
+
     public int CompareTo(Player two)
     {
         if (initiative > two.initiative)
@@ -72,6 +96,10 @@ public class PlayerUpdate : MonoBehaviour
             return 0;
         else
             return -1;
+    }
+
+    public bool isDead () {
+        return dead;
     }
 
 }

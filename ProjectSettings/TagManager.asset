@@ -9,6 +9,7 @@ TagManager:
   - Map
   - UI
   - Logs
+  - Entity_Card
   layers:
   - Default
   - TransparentFX

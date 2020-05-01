@@ -62,15 +62,6 @@ public class GameController : MonoBehaviour
                                            || currState == (int)GameState.Player_Four;
     }
 
-    bool isPlayer(object obj)
-    {
-        return obj.GetType() == typeof(Player);
-    }
-    bool isEnemy(object obj)
-    {
-        return obj.GetType() == typeof(Enemy);
-    }
-
     // Turns the turn to the enemy turn
     public static void enemyTurn()
     {
@@ -98,7 +89,9 @@ public class GameController : MonoBehaviour
         }
         else if (currState == (int)GameState.Enemy)
             Logs.addEntry("Enemy Turn");
-        if (UI.isEnemy(Map.turnOrder[currTurn]) && ((Enemy)Map.turnOrder[currTurn]).getController().isDead())
+        if (isEnemy(Map.turnOrder[currTurn]) && ((Enemy)Map.turnOrder[currTurn]).getController().isDead())
+            currTurn++;
+        else if (isPlayer(Map.turnOrder[currTurn]) && ((Player)Map.turnOrder[currTurn]).update.isDead())
             currTurn++;
     }
 
@@ -121,5 +114,22 @@ public class GameController : MonoBehaviour
 
     public static int getPrevState() {
         return prevState;
+    }
+
+    public static bool isPlayer(object obj)
+    {
+        return obj.GetType() == typeof(Player);
+    }
+    public static bool isEnemy(object obj)
+    {
+        return obj.GetType() == typeof(Enemy);
+    }
+    public static bool isEnemyCont(object obj)
+    {
+        return obj.GetType() == typeof(EnemyController);
+    }
+    public static bool isPlayerCont(object obj)
+    {
+        return obj.GetType() == typeof(PlayerUpdate);
     }
 }

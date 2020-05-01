@@ -17,6 +17,8 @@ public class EnemyController : MonoBehaviour
 
     public bool dead;
 
+    public int health = 10;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,20 +78,34 @@ public class EnemyController : MonoBehaviour
             shootEnemy();
     }
 
+    public void OnMouseOver()
+    {
+        UI.showEntity(this);
+    }
+    public void OnMouseExit()
+    {
+        UI.removeEntityCard();
+    }
+
     // What happens when an enemy gets shot
     // Currently just an insta-kill
     public void shootEnemy() {
         if (enemyInShootingDistance())
-            destroyEnemy();
+            damage(5);
         GameController.cancelShooting();
+        GameController.nextTurn();
     }
-
 
     public bool enemyInShootingDistance () {
         Vector3 playerShooting = Map.players[GameController.getPrevState()].update.curr_pos;
         return Map.inCircle(playerShooting, curr_pos, 8);
     }
 
+    public void damage (int amount) {
+        health -= amount;
+        if (health <= 0)
+            destroyEnemy();
+    }
 
     public void destroyEnemy () {
         dead = true;

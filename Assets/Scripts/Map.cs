@@ -13,12 +13,16 @@ public class Map : MonoBehaviour
     public static int tileSize = 8;
     Texture2D[,] tileTextures;
     public static Tile[,] tiles;
+    public static Node[,] nodeMap;
     Sprite[] spriteSheetSprites;
     Texture2D[] spriteSheetTextures;
     public static Player[] players;
     public static Enemy[] enemies;
     public static object[] turnOrder;
     public Logs logs;
+    int x_temp = -1, y_temp = -1, clusterSize = 0, clusterMax = 2;
+
+    // MAP GENERATION
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +40,7 @@ public class Map : MonoBehaviour
         loadMapTiles();
         loadEntities();
         updateFogOfWar();
+        setNodeMap();
         UI.instantiateEntities();
         logs = new Logs();
         //Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, once seeming to bustle with life.");
@@ -140,17 +145,37 @@ public class Map : MonoBehaviour
         return texture;
     }
 
-    // Gets a random valid position on the map
+    // Gets a random valid position on the map, tries to cluster enemies together
     Vector3 randomPos()
     {
-        int x = (int)UnityEngine.Random.Range(10, tiles.GetLength(0));
-        int y = (int)UnityEngine.Random.Range(10, tiles.GetLength(1));
-        if (tiles[x, y].id == -1)
+        if (x_temp == -1 || clusterSize >= clusterMax)
+        {
+            x_temp = (int)UnityEngine.Random.Range(10, tiles.GetLength(0));
+        }
+        else
+            x_temp = (int)UnityEngine.Random.Range(clampToMap(x_temp - 2, 2, 0), clampToMap(x_temp + 3, 2, 0));
+        if (y_temp == -1 || clusterSize >= clusterMax)
+        {
+            y_temp = (int)UnityEngine.Random.Range(10, tiles.GetLength(1));
+            clusterSize = 0;
+        }
+        else
+            y_temp = (int)UnityEngine.Random.Range(clampToMap(y_temp - 2, 2, 1), clampToMap(y_temp + 3, 2, 1));
+
+        if (tiles[x_temp, y_temp].id == -1)
             return randomPos();
-        if (tiles[x, y].isWalkable())
-            return new Vector3(x * 0.08f, y * 0.08f, -3);
+        if (tiles[x_temp, y_temp].isWalkable())
+        {
+            clusterSize++;
+            return new Vector3(x_temp * 0.08f, y_temp * 0.08f, -3);
+        }
         else
             return randomPos();
+    }
+
+    int clampToMap(int eq, int min, int dimension)
+    {
+        return Mathf.Clamp(eq, 2, tiles.GetLength(1));
     }
 
     // Loads all entities
@@ -169,6 +194,30 @@ public class Map : MonoBehaviour
         printTurnOrder();
     }
 
+    // MAP UTILITY
+
+    public static Tile GetTile(Vector3 pos)
+    {
+        return tiles[(int)toCoord(pos.x), (int)toCoord(pos.y)];
+    }
+    public static Tile GetTile(int x, int y)
+    {
+        return tiles[x, y];
+    }
+    public static void setNodeMap() {
+        nodeMap = new Node[tiles.GetLength(0), tiles.GetLength(1)];
+        foreach (Tile t in tiles)
+            nodeMap[t.x, t.y] = new Node(t.x, t.y, t.isWalkable());
+
+    }
+    public static Node GetNode(Vector3 pos)
+    {
+        return nodeMap[(int)toCoord(pos.x), (int)toCoord(pos.y)];
+    }
+    public static Node GetNode(int x, int y) {
+        return nodeMap[x, y];
+    }
+
     // Checks to see if one Vector3 is inside the circle of another Vector3
     public static bool inCircle(Vector3 center, Vector3 target, int radius)
     {
@@ -185,6 +234,22 @@ public class Map : MonoBehaviour
         }
         return false;
     }
+
+    // A STAR
+
+    // Checks to see if a point is within A* range for a start position
+    public static bool inAStar (Vector3 start, Vector3 end, int moveRadius) {
+
+        Pathfinding pathfinding = new Pathfinding();
+        List<Node> path = pathfinding.FindPath(start, end);
+        Debug.Log(path);
+        if (path != null && path.Count <= moveRadius)
+            return true;
+
+        return false;
+    }
+
+    // MORE UTILITY
 
     // Goes from a unit in Unity to coords on the tiles
     public static float toCoord(float i)

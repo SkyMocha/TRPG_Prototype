@@ -10,9 +10,18 @@ public class UI : MonoBehaviour
 
     public static GameObject[] UI_Entities;
 
+    public static GameObject entityCard;
+    public static Image entityCardImage;
+    public static Text entityCardText;
+
     // Goes through the turn order and instantiates all entities
     public static void instantiateEntities()
     {
+        entityCard = GameObject.FindWithTag("Entity_Card");
+        entityCardText = GameObject.FindWithTag("Entity_Card").transform.GetChild(3).GetComponent(typeof (Text)) as Text;
+        entityCardImage = GameObject.FindWithTag("Entity_Card").transform.GetChild(1).GetComponent(typeof(Image)) as Image;
+        entityCard.SetActive(false);
+
         assignOrderValue();
         entityPrefab = Resources.Load<GameObject>("Prefabs/UI_Entity");
         UI_Entities = new GameObject[Map.turnOrder.Length];
@@ -20,9 +29,9 @@ public class UI : MonoBehaviour
         int i = 0;
         foreach (object obj in Map.turnOrder)
         {
-            if (isPlayer(obj))
+            if (GameController.isPlayer(obj))
                 instantiatePlayer((Player) obj, x, i);
-            else if (isEnemy(obj))
+            else if (GameController.isEnemy(obj))
                 instantiateEnemy((Enemy) obj, x, i);
             x += 100;
             i++;
@@ -86,14 +95,15 @@ public class UI : MonoBehaviour
         int i = 0;
         foreach (object obj in Map.turnOrder)
         {
-            if (isPlayer(obj))
+            if (GameController.isPlayer(obj))
                 ((Player)obj).update.order = i;
-            else if (isEnemy(obj))
+            else if (GameController.isEnemy(obj))
                 ((Enemy)obj).getController().order = i;
             i++;
         }
     }
 
+    // Updates the card order on the screen for when an enemy or player is killed
     public static void updateCardX () {
         int x = 25;
         int i = 0;
@@ -109,8 +119,30 @@ public class UI : MonoBehaviour
         }
     }
 
+    // Shows the entity on the right-hand side card
+    public static void showEntity (object entity) {
+        if (GameController.isEnemyCont(entity))
+        {
+            EnemyController enemy = (EnemyController)entity;
+            entityCardText.text = enemy.health + "\n" + enemy.initiative;
+            entityCardImage.sprite = enemy.spriteRenderer.sprite;
+        }
+        else if (GameController.isPlayerCont(entity)) 
+        {
+            PlayerUpdate player = (PlayerUpdate)entity;
+            entityCardText.text = player.health + "\n" + player.initiative;
+            entityCardImage.sprite = player.spriteRenderer.sprite;
+        }
+        entityCard.SetActive(true);
+    }
+    // Removes the entity card from the screen
+    public static void removeEntityCard()
+    {
+        entityCard.SetActive(false);
+    }
+
     public static bool isDead (int i){
-        if (isEnemy(Map.turnOrder[i]) && ((Enemy)Map.turnOrder[i]).getController().isDead())
+        if (GameController.isEnemy(Map.turnOrder[i]) && ((Enemy)Map.turnOrder[i]).getController().isDead())
             return true;
         return false;
     }
@@ -125,12 +157,4 @@ public class UI : MonoBehaviour
     {
     }
 
-    public static bool isPlayer(object obj)
-    {
-        return obj.GetType() == typeof(Player);
-    }
-    public static bool isEnemy(object obj)
-    {
-        return obj.GetType() == typeof(Enemy);
-    }
 }
