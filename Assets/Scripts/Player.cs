@@ -74,5 +74,9 @@ public class Player : MonoBehaviour
     public GameObject getPlayer () {
         return playerObject;
     }
+    public PlayerUpdate getController()
+    {
+        return update;
+    }
 
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Game.Tile;
 
 public class Pathfinding {
 
@@ -169,6 +170,10 @@ public class Node
     public override string ToString()
     {
         return x + ", " + y + "\nhcost " + hCost + "    gcost" + gCost;
+    }
+
+    public Tile getTile () {
+        return Map.tiles[x, y];
     }
 
 }

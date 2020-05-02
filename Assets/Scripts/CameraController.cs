@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         // Moves the camera towards the current player
-        if (GameController.isPlayerTurn() && !wasdPressed() && !cameraMoving)
+        if ((GameController.isPlayerTurn() || GameController.isAnimation()) && !wasdPressed() && !cameraMoving)
         {
             move(Map.players[GameController.currState].getPlayer().transform.position);
         }

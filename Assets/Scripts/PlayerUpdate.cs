@@ -30,13 +30,23 @@ public class PlayerUpdate : MonoBehaviour
 
     public void updatePosition (Vector3 pos) {
         Debug.Log("MOVING PLAYER " + id);
+        StartCoroutine(moveTo(pos));
+    }
 
+    public IEnumerator moveTo (Vector3 pos) {
         if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius) && Map.inAStar(curr_pos, pos, moveRadius))
         {
-            curr_pos = pos;
-            playerObject.transform.position = curr_pos;
+            Pathfinding pathfinding = new Pathfinding();
+            List<Node> path = pathfinding.FindPath(curr_pos, pos);
 
-            Map.updateFogOfWar();
+            curr_pos = pos;
+            GameController.setAnimation();
+            foreach (Node node in path) {
+                playerObject.transform.position = new Vector3(Map.toUnit(node.x), Map.toUnit(node.y), -3);
+                Map.updateFogOfWar();
+                yield return new WaitForSeconds(0.2f);
+            }
+            GameController.cancelAnimation();
             GameController.nextTurn();
         }
     }

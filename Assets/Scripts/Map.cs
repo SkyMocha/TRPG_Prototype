@@ -43,7 +43,6 @@ public class Map : MonoBehaviour
         setNodeMap();
         UI.instantiateEntities();
         logs = new Logs();
-        //Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, once seeming to bustle with life.");
         Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, " +
                       "once seeming to bustle with life." +
                       "Ooze eminates from the roads as though clearly something has happened to this once great city." +
@@ -242,8 +241,7 @@ public class Map : MonoBehaviour
 
         Pathfinding pathfinding = new Pathfinding();
         List<Node> path = pathfinding.FindPath(start, end);
-        Debug.Log(path);
-        if (path != null && path.Count <= moveRadius)
+        if (path != null && path.Count <= moveRadius + 1)
             return true;
 
         return false;

@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
         Player_Four,
         Enemy,
         Shooting,
+        Animation,
     }
 
     public static int currState = 0; // The current playable or non playable game state
@@ -112,8 +113,32 @@ public class GameController : MonoBehaviour
         Map.updateFogOfWar();
     }
 
+    public static void setAnimation () {
+        prevState = currState;
+        currState = (int)GameState.Animation;
+    }
+    public static void cancelAnimation()
+    {
+        currState = prevState;
+    }
+    public static bool isAnimation()
+    {
+        return currState == (int)GameState.Animation;
+    }
+
     public static int getPrevState() {
         return prevState;
+    }
+
+    public static Player getCurrPlayer () {
+        return Map.players[(int)currState];
+    }
+    public static PlayerUpdate currPlayerController()
+    {
+        return getCurrPlayer().getController();
+    }
+    public static Vector3 currPlayerPos () {
+       return getCurrPlayer().getController().curr_pos;
     }
 
     public static bool isPlayer(object obj)
