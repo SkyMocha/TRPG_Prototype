@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
 
     public bool isPlayer = false;
 
-    public Enemy(Vector3 pos, int tId)
+    public Enemy(Entity type, Vector3 pos, int tId)
     {
         enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemy");
 
@@ -30,11 +30,14 @@ public class Enemy : MonoBehaviour
         enemy.curr_pos = pos;
 
         enemy.spriteRenderer = enemyObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
-        
+
+        enemy.setEntity(type);
+
     }
 
-    public Enemy(Vector3 pos)
+    public Enemy(Entity type, Vector3 pos)
     {
+
         enemyPrefab = Resources.Load<GameObject>("Prefabs/Enemy");
 
         enemyObject = Instantiate(enemyPrefab, pos, Quaternion.identity);
@@ -46,6 +49,8 @@ public class Enemy : MonoBehaviour
         enemy.curr_pos = pos;
 
         enemy.spriteRenderer = enemyObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+
+        enemy.setEntity(type);
 
     }
 

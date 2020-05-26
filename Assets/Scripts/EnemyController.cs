@@ -15,11 +15,7 @@ public class EnemyController : MonoBehaviour
     public int initiative;
     public int order;
 
-    public bool dead;
-
-    public int health = 10;
-
-    public int defense, elemDefense;
+    public Entity entity;
 
     // Start is called before the first frame update
     void Start()
@@ -31,9 +27,9 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         updatePos();
-        if (GameController.isEnemyTurn() && GameController.isEnemyTurn(order) && !dead)
+        if (GameController.isEnemyTurn() && GameController.isEnemyTurn(order) && !isDead())
             enemyAI();
-        else if (GameController.isEnemyTurn() && GameController.isEnemyTurn(order) && dead)
+        else if (GameController.isEnemyTurn() && GameController.isEnemyTurn(order) && isDead())
             GameController.nextTurn();
     }
 
@@ -105,19 +101,27 @@ public class EnemyController : MonoBehaviour
     }
 
     public void damage (int normalAmount, int elemAmount) {
-        health -= ((normalAmount - defense) + (elemAmount - elemDefense));
-        if (health <= 0)
+        entity.damage(normalAmount, elemAmount);
+        if (entity.getHealth() <= 0)
             destroyEnemy();
     }
 
     public void destroyEnemy () {
-        dead = true;
+        entity.kill();
         Destroy(gameObject);
         UI.destroyCard(order);
         Logs.addEntry("Enemy " + name + " down");
     }
 
     public bool isDead () {
-        return dead;
+        return entity.isDead();
+    }
+
+    public Entity getEntity () {
+        return entity;
+    }
+
+    public void setEntity (Entity t) {
+        entity = t;
     }
 }

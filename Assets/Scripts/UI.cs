@@ -126,7 +126,7 @@ public class UI : MonoBehaviour
         if (GameController.isEnemyCont(entity))
         {
             EnemyController enemy = (EnemyController)entity;
-            entityCardText.text = enemy.health + "\n" + enemy.initiative;
+            entityCardText.text = enemy.getEntity().getHealth() + "\n" + enemy.initiative;
             entityCardImage.sprite = enemy.spriteRenderer.sprite;
             entityCardInventory.text = "EMPTY";
         }
@@ -141,14 +141,15 @@ public class UI : MonoBehaviour
         entityCard.SetActive(true);
     }
 
+    // Gets a string based on the equipped of the inventory
     public static string getInventoryText (List<Item> inv) {
         string weaponText = "Weapons: \n";
         string spellText = "Spells: \n";
         foreach (Item item in inv) {
             if (item.isWeapon())
-                weaponText += item.getName();
+                weaponText += "* " + item.getName();
             if (item.isSpell())
-                spellText += item.getName();
+                spellText += "* " + item.getName();
         }
         if (weaponText == "Weapons: \n")
             weaponText = "";

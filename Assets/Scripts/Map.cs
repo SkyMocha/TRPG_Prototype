@@ -44,8 +44,8 @@ public class Map : MonoBehaviour
         UI.instantiateEntities();
         logs = new Logs();
         Logs.addEntry("As you enter the city propers through the road you encounter nothing more than a desolate city, " +
-                      "once seeming to bustle with life." +
-                      "Ooze eminates from the roads as though clearly something has happened to this once great city." +
+                      "once seeming to bustle with life. " +
+                      "Ooze eminates from the roads as though clearly something has happened to this once great city. " +
                       "You choose to begin your investigation of this metropolis, guns drawn.");
     }
 
@@ -184,10 +184,10 @@ public class Map : MonoBehaviour
         players[1] = new Player(playerStarts[1], 1);
         players[2] = new Player(playerStarts[2], 2);
         players[3] = new Player(playerStarts[3], 3);
-        enemies[0] = new Enemy(randomPos());
-        enemies[1] = new Enemy(randomPos());
-        enemies[2] = new Enemy(randomPos());
-        enemies[3] = new Enemy(randomPos());
+        enemies[0] = new Enemy(new Elemental(), randomPos());
+        enemies[1] = new Enemy(new Elemental(), randomPos());
+        enemies[2] = new Enemy(new Elemental(), randomPos());
+        enemies[3] = new Enemy(new Elemental(), randomPos());
 
         turnOrder = getTurnOrder();
         printTurnOrder();
