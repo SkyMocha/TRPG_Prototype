@@ -359,12 +359,12 @@ public class Map : MonoBehaviour
     }
 
     // Draws a radius around a specific point
-    public static void drawRadius(Vector3 pos) {
+    public static void drawRadius(Vector3 pos, int radius) {
         foreach (Tile t in tiles)
         {
             if (t.id != -1)
             {
-                if (inCircle(pos, t.gameObject.transform.position, 8))
+                if (inCircle(pos, t.gameObject.transform.position, radius))
                 {
                     t.illuminate();
                 }

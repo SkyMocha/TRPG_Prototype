@@ -13,13 +13,15 @@ public class UI : MonoBehaviour
     public static GameObject entityCard;
     public static Image entityCardImage;
     public static Text entityCardText;
+    public static Text entityCardInventory;
 
     // Goes through the turn order and instantiates all entities
     public static void instantiateEntities()
     {
-        entityCard = GameObject.FindWithTag("Entity_Card");
+        entityCard = GameObject.FindWithTag("Entity_Card"); // The entity card on the right side of the screen
         entityCardText = GameObject.FindWithTag("Entity_Card").transform.GetChild(3).GetComponent(typeof (Text)) as Text;
         entityCardImage = GameObject.FindWithTag("Entity_Card").transform.GetChild(1).GetComponent(typeof(Image)) as Image;
+        entityCardInventory = GameObject.FindWithTag("Entity_Card").transform.GetChild(4).GetComponent(typeof(Text)) as Text;
         entityCard.SetActive(false);
 
         assignOrderValue();
@@ -126,15 +128,35 @@ public class UI : MonoBehaviour
             EnemyController enemy = (EnemyController)entity;
             entityCardText.text = enemy.health + "\n" + enemy.initiative;
             entityCardImage.sprite = enemy.spriteRenderer.sprite;
+            entityCardInventory.text = "EMPTY";
         }
         else if (GameController.isPlayerCont(entity)) 
         {
-            PlayerUpdate player = (PlayerUpdate)entity;
+            PlayerController player = (PlayerController)entity;
             entityCardText.text = player.health + "\n" + player.initiative;
             entityCardImage.sprite = player.spriteRenderer.sprite;
+            entityCardInventory.text = getInventoryText(player.equipped);
+            
         }
         entityCard.SetActive(true);
     }
+
+    public static string getInventoryText (List<Item> inv) {
+        string weaponText = "Weapons: \n";
+        string spellText = "Spells: \n";
+        foreach (Item item in inv) {
+            if (item.isWeapon())
+                weaponText += item.getName();
+            if (item.isSpell())
+                spellText += item.getName();
+        }
+        if (weaponText == "Weapons: \n")
+            weaponText = "";
+        if (spellText == "Spells: \n")
+            spellText = "";
+        return weaponText + "\n" + spellText;
+    }
+
     // Removes the entity card from the screen
     public static void removeEntityCard()
     {
@@ -146,7 +168,7 @@ public class UI : MonoBehaviour
             return true;
         return false;
     }
-
+    
     // Start is called before the first frame update
     void Start()
     {

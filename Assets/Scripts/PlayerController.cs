@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerUpdate : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
 
     public GameObject playerObject;
@@ -16,10 +16,16 @@ public class PlayerUpdate : MonoBehaviour
     public SpriteRenderer spriteRenderer;
     public bool dead;
 
+    public List<Item> inventory; // The players whole inventory
+    public List<Item> equipped; // The equipped items for the player
+
     private void Start()
     {
         player.moveSphereObject.transform.localScale = new Vector3(5 * 3 / 5, 5 * 3 / 5);
         moveRadius = 5;
+        inventory = new List<Item>();
+        equipped = new List<Item>();
+        equipped.Add(new Pistol());
     }
 
     // Update is called once per frame
@@ -28,11 +34,13 @@ public class PlayerUpdate : MonoBehaviour
         actionHandler();
     }
 
+    // Updates the players position
     public void updatePosition (Vector3 pos) {
         Debug.Log("MOVING PLAYER " + id);
         StartCoroutine(moveTo(pos));
     }
 
+    // Moves a player over time
     public IEnumerator moveTo (Vector3 pos) {
         if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius) && Map.inAStar(curr_pos, pos, moveRadius))
         {
@@ -51,17 +59,19 @@ public class PlayerUpdate : MonoBehaviour
         }
     }
 
+    // Checks to see if the player can perform an action
     public bool isActionable () {
         return GameController.isPlayerTurn(id) || GameController.isShooting();
     }
 
+    // Handles the actions the player can do
     public void actionHandler () {
         if (isActionable())
         {
             // Does the player want to shoot?
             if (Input.GetKeyDown(KeyCode.E) && !GameController.isShooting())
             {
-                Map.drawRadius(curr_pos);
+                Map.drawRadius(curr_pos, getCurrentWeapon().getRange());
                 GameController.setShooting();
                 Debug.Log("SHOOT");
             }
@@ -76,12 +86,14 @@ public class PlayerUpdate : MonoBehaviour
         }
     }
 
+    // Damages the player
     public void damage (int amount) {
         health -= amount;
         if (health <= 0)
             destroyPlayer();
     }
 
+    // Destorys the player
     public void destroyPlayer () {
         dead = true;
         Destroy(playerObject);
@@ -89,6 +101,7 @@ public class PlayerUpdate : MonoBehaviour
         Logs.addEntry("Player " + name + " down!");
     }
 
+    // OnMouseOver and OnMouseExit
     public void OnMouseOver()
     {
         UI.showEntity(this);
@@ -98,6 +111,7 @@ public class PlayerUpdate : MonoBehaviour
         UI.removeEntityCard();
     }
 
+    // Compares one player to another
     public int CompareTo(Player two)
     {
         if (initiative > two.initiative)
@@ -110,6 +124,36 @@ public class PlayerUpdate : MonoBehaviour
 
     public bool isDead () {
         return dead;
+    }
+
+    public List<Item> getInventory()
+    {
+        return inventory;
+    }
+
+    // Gets all equipped items
+    public List<Item> getEquipped () {
+        return equipped;
+    }
+
+    // Gets all equipped weapons
+    public List<Item> getEquippedWeapons () {
+        List<Item> weapons = new List<Item>();
+        foreach (Item i in equipped) {
+            if (i.isWeapon())
+                weapons.Add(i);
+        }
+        return weapons;
+    }
+
+    // Gets the currently used weapon
+    public Item getCurrentWeapon () {
+        return getEquippedWeapons()[0];
+    }
+
+    // Gets the position of the player
+    public Vector3 getPos() {
+        return curr_pos;
     }
 
 }

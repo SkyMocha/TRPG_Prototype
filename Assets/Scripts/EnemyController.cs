@@ -19,6 +19,8 @@ public class EnemyController : MonoBehaviour
 
     public int health = 10;
 
+    public int defense, elemDefense;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -91,18 +93,19 @@ public class EnemyController : MonoBehaviour
     // Currently just an insta-kill
     public void shootEnemy() {
         if (enemyInShootingDistance())
-            damage(5);
+            foreach (Item i in GameController.currPlayerController().getEquippedWeapons())
+                damage(i.damage, i.elemDamage);
         GameController.cancelShooting();
         GameController.nextTurn();
     }
 
     public bool enemyInShootingDistance () {
-        Vector3 playerShooting = Map.players[GameController.getPrevState()].update.curr_pos;
-        return Map.inCircle(playerShooting, curr_pos, 8);
+        PlayerController playerShooting = Map.players[GameController.getPrevState()].getController();
+        return Map.inCircle(playerShooting.getPos(), curr_pos, playerShooting.getCurrentWeapon().getRange());
     }
 
-    public void damage (int amount) {
-        health -= amount;
+    public void damage (int normalAmount, int elemAmount) {
+        health -= ((normalAmount - defense) + (elemAmount - elemDefense));
         if (health <= 0)
             destroyEnemy();
     }

@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     public GameObject moveSphereObject;
     public MoveSphere moveSphere;
     public int id;
-    public PlayerUpdate update;
+    public PlayerController update;
     public int initiative = 5;
     //bool isPlayer = true;
 
@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
         playerController.moveSphereObject = playerObject.transform.GetChild(0).gameObject;
         playerController.moveSphere = playerController.moveSphereObject.GetComponent(typeof(MoveSphere)) as MoveSphere;
 
-        update = playerObject.AddComponent(typeof(PlayerUpdate)) as PlayerUpdate;
+        update = playerObject.AddComponent(typeof(PlayerController)) as PlayerController;
         update.playerObject = playerObject;
         update.id = tId;
         update.player = playerController;
@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
     public GameObject getPlayer () {
         return playerObject;
     }
-    public PlayerUpdate getController()
+    public PlayerController getController()
     {
         return update;
     }

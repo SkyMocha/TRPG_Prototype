@@ -133,7 +133,7 @@ public class GameController : MonoBehaviour
     public static Player getCurrPlayer () {
         return Map.players[(int)currState];
     }
-    public static PlayerUpdate currPlayerController()
+    public static PlayerController currPlayerController()
     {
         return getCurrPlayer().getController();
     }
@@ -155,6 +155,6 @@ public class GameController : MonoBehaviour
     }
     public static bool isPlayerCont(object obj)
     {
-        return obj.GetType() == typeof(PlayerUpdate);
+        return obj.GetType() == typeof(PlayerController);
     }
 }
