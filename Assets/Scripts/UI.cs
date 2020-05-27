@@ -133,9 +133,9 @@ public class UI : MonoBehaviour
         else if (GameController.isPlayerCont(entity)) 
         {
             PlayerController player = (PlayerController)entity;
-            entityCardText.text = player.health + "\n" + player.initiative;
+            entityCardText.text = player.getEntity().getHealth() + "\n" + player.getEntity().getInitiative();
             entityCardImage.sprite = player.spriteRenderer.sprite;
-            entityCardInventory.text = getInventoryText(player.equipped);
+            entityCardInventory.text = getInventoryText(player.getEntity().getEquippedWeapons());
             
         }
         entityCard.SetActive(true);

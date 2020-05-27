@@ -32,8 +32,8 @@ public class TileTrigger : MonoBehaviour
     {
         if (isWalkable() && 
             GameController.isPlayerTurn() && 
-            Map.inCircle(GameController.currPlayerPos(), curr_pos, GameController.currPlayerController().moveRadius) &&
-            Map.inAStar(GameController.currPlayerPos(), curr_pos, GameController.currPlayerController().moveRadius)
+            Map.inCircle(GameController.currPlayerPos(), curr_pos, GameController.currPlayerController().getEntity().getMoveRadius()) &&
+            Map.inAStar(GameController.currPlayerPos(), curr_pos, GameController.currPlayerController().getEntity().getMoveRadius())
            ) {
             Pathfinding pathfinding = new Pathfinding();
             currPath = pathfinding.FindPath(GameController.currPlayerPos(), curr_pos);

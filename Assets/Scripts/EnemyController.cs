@@ -35,7 +35,10 @@ public class EnemyController : MonoBehaviour
 
     void enemyAI()
     {
-        GameController.nextTurn();
+        if (!discovered)
+            GameController.nextTurn();
+        else
+            EnemyAI.run(this);
     }
 
     void updatePos()
@@ -89,7 +92,7 @@ public class EnemyController : MonoBehaviour
     // Currently just an insta-kill
     public void shootEnemy() {
         if (enemyInShootingDistance())
-            foreach (Item i in GameController.currPlayerController().getEquippedWeapons())
+            foreach (Item i in GameController.currPlayerController().getEntity().getEquippedWeapons())
                 damage(i.damage, i.elemDamage);
         GameController.cancelShooting();
         GameController.nextTurn();
@@ -97,7 +100,7 @@ public class EnemyController : MonoBehaviour
 
     public bool enemyInShootingDistance () {
         PlayerController playerShooting = Map.players[GameController.getPrevState()].getController();
-        return Map.inCircle(playerShooting.getPos(), curr_pos, playerShooting.getCurrentWeapon().getRange());
+        return Map.inCircle(playerShooting.getPos(), curr_pos, playerShooting.getEntity().getCurrentWeapon().getRange());
     }
 
     public void damage (int normalAmount, int elemAmount) {
@@ -123,5 +126,9 @@ public class EnemyController : MonoBehaviour
 
     public void setEntity (Entity t) {
         entity = t;
+    }
+
+    public Vector3 getPos () {
+        return curr_pos;
     }
 }

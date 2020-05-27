@@ -15,7 +15,6 @@ public class Player : MonoBehaviour
     Player playerController;
     int moveRadius;
     public GameObject moveSphereObject;
-    public MoveSphere moveSphere;
     public int id;
     public PlayerController update;
     public int initiative = 5;
@@ -33,19 +32,25 @@ public class Player : MonoBehaviour
         playerController.curr_pos = pos;
 
         playerController.moveSphereObject = playerObject.transform.GetChild(0).gameObject;
-        playerController.moveSphere = playerController.moveSphereObject.GetComponent(typeof(MoveSphere)) as MoveSphere;
 
         update = playerObject.AddComponent(typeof(PlayerController)) as PlayerController;
         update.playerObject = playerObject;
         update.id = tId;
         update.player = playerController;
-        update.moveRadius = moveRadius;
 
         update.curr_pos = pos;
 
         update.spriteRenderer = playerObject.GetComponent(typeof(SpriteRenderer)) as SpriteRenderer;
-
+        
         loadSprites();
+
+        Entity e = new Entity();
+        e.setMoveRadius(5);
+        e.setInitiative(5);
+        e.initHealth(20);
+        e.addItem(new Pistol());
+        update.setEntity(e);
+
     }
 
     void loadSprites () {
@@ -58,18 +63,6 @@ public class Player : MonoBehaviour
     {
         moveRadius = 5;
     }
-
-    // Changes the players position if it is their turn
-    //public void changePos (Vector3 pos){
-        // PASSING ID OF 0 WHEN IT SHOULD BE 3
-        //Debug.Log(update.id);
-        //if (GameController.isPlayerTurn(update.id) && Map.inCircle (update.curr_pos, pos, update.moveRadius))
-        //{
-        //    update.curr_pos = pos;
-        //    update.updatePosition();
-        //    Map.updateFogOfWar();
-        //}
-    //}
 
     public GameObject getPlayer () {
         return playerObject;

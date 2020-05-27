@@ -138,7 +138,7 @@ public class GameController : MonoBehaviour
         return getCurrPlayer().getController();
     }
     public static Vector3 currPlayerPos () {
-       return getCurrPlayer().getController().curr_pos;
+        return getCurrPlayer().getController().getPos();
     }
 
     public static bool isPlayer(object obj)

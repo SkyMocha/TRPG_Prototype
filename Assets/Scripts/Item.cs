@@ -76,7 +76,7 @@ public class Firebolt : Item
     {
         setName("Firebolt");
         elemDamage = 4;
-        setSpell();
+        setWeapon();
         range = 10;
     }
 }

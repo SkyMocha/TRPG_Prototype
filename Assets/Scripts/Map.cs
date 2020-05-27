@@ -189,6 +189,7 @@ public class Map : MonoBehaviour
         enemies[2] = new Enemy(new Elemental(), randomPos());
         enemies[3] = new Enemy(new Elemental(), randomPos());
 
+        Debug.Log("GETTING TURN ORDER");
         turnOrder = getTurnOrder();
         printTurnOrder();
     }
@@ -247,6 +248,16 @@ public class Map : MonoBehaviour
         return false;
     }
 
+    // Gets all players in range from a position
+    // Used currently for enemyAI
+    public static List<Player> playersInRange (Vector3 start, int radius) {
+        List<Player> temp = new List<Player>(); 
+        foreach (Player p in players)
+            if (inCircle(start, p.getController().getPos(), radius))
+                temp.Add(p);
+        return temp;
+    }
+
     // MORE UTILITY
 
     // Goes from a unit in Unity to coords on the tiles
@@ -295,7 +306,7 @@ public class Map : MonoBehaviour
     {
         object[] entities = new object[players.Length + enemies.Length];
         Player[] sortedPlayers = newPlayerArray(players);
-        Array.Sort(sortedPlayers, new Comparison<Player>((p1, p2) => p2.update.CompareTo(p1)));
+        Array.Sort(sortedPlayers, new Comparison<Player>((p1, p2) => p2.getController().CompareTo(p1)));
         Enemy[] sortedEnemies = newEnemyArray(enemies);
         Array.Sort(sortedEnemies, new Comparison<Enemy>((p1, p2) => p2.getController().CompareTo(p1)));
         entities = mergeArrays(sortedPlayers, sortedEnemies);
@@ -331,6 +342,7 @@ public class Map : MonoBehaviour
         {
             s += obj.GetType() + " ";
         }
+        Debug.Log(s);
     }
 
     // Shamelessly taken (and modified obviously) from GeeksforGeeks
@@ -343,7 +355,7 @@ public class Map : MonoBehaviour
 
         while (i < n1 && j < n2)
         {
-            if (arr1[i].update.initiative > arr2[j].getController().initiative)
+            if (arr1[i].getController().getEntity().getInitiative() > arr2[j].getController().getEntity().getInitiative())
                 arr3[k++] = arr2[j++];
             else
                 arr3[k++] = arr1[i++];
@@ -370,5 +382,9 @@ public class Map : MonoBehaviour
                 }
             }
         }
+    }
+
+    public static Player[] getPlayers () {
+        return players;
     }
 }

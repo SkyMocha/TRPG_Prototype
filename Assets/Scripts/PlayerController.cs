@@ -5,27 +5,19 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 
-    public GameObject playerObject;
-    public int id;
-    public Vector3 curr_pos;
-    public Player player;
-    public int moveRadius;
-    public int initiative;
-    public int order;
-    public int health = 20;
-    public SpriteRenderer spriteRenderer;
-    public bool dead;
+    public Player player; // The actual player master class
+    public GameObject playerObject; // The player object in the world
+    public SpriteRenderer spriteRenderer; // The spriterenderer
 
-    public List<Item> inventory; // The players whole inventory
-    public List<Item> equipped; // The equipped items for the player
+    public int id; // The player's ID
+    public Vector3 curr_pos; // The players current Vector3 Position
+
+    public int order; // The players turn in the turn order
+    Entity entity; // The players entity object
 
     private void Start()
     {
-        player.moveSphereObject.transform.localScale = new Vector3(5 * 3 / 5, 5 * 3 / 5);
-        moveRadius = 5;
-        inventory = new List<Item>();
-        equipped = new List<Item>();
-        equipped.Add(new Pistol());
+        //player.moveSphereObject.transform.localScale = new Vector3(5 * 3 / 5, 5 * 3 / 5);
     }
 
     // Update is called once per frame
@@ -42,7 +34,7 @@ public class PlayerController : MonoBehaviour
 
     // Moves a player over time
     public IEnumerator moveTo (Vector3 pos) {
-        if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, moveRadius) && Map.inAStar(curr_pos, pos, moveRadius))
+        if (GameController.isPlayerTurn(id) && Map.inCircle(curr_pos, pos, entity.getMoveRadius()) && Map.inAStar(curr_pos, pos, entity.getMoveRadius()))
         {
             Pathfinding pathfinding = new Pathfinding();
             List<Node> path = pathfinding.FindPath(curr_pos, pos);
@@ -71,7 +63,7 @@ public class PlayerController : MonoBehaviour
             // Does the player want to shoot?
             if (Input.GetKeyDown(KeyCode.E) && !GameController.isShooting())
             {
-                Map.drawRadius(curr_pos, getCurrentWeapon().getRange());
+                Map.drawRadius(curr_pos, entity.getCurrentWeapon().getRange());
                 GameController.setShooting();
                 Debug.Log("SHOOT");
             }
@@ -86,16 +78,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Damages the player
-    public void damage (int amount) {
-        health -= amount;
-        if (health <= 0)
-            destroyPlayer();
-    }
-
     // Destorys the player
     public void destroyPlayer () {
-        dead = true;
+        entity.kill();
         Destroy(playerObject);
         UI.destroyCard(order);
         Logs.addEntry("Player " + name + " down!");
@@ -114,46 +99,30 @@ public class PlayerController : MonoBehaviour
     // Compares one player to another
     public int CompareTo(Player two)
     {
-        if (initiative > two.initiative)
+        if (entity.getInitiative() > two.initiative)
             return 1;
-        else if (initiative == two.initiative)
+        else if (entity.getInitiative() == two.initiative)
             return 0;
         else
             return -1;
     }
 
     public bool isDead () {
-        return dead;
+        return entity.isDead();
     }
-
-    public List<Item> getInventory()
-    {
-        return inventory;
-    }
-
-    // Gets all equipped items
-    public List<Item> getEquipped () {
-        return equipped;
-    }
-
-    // Gets all equipped weapons
-    public List<Item> getEquippedWeapons () {
-        List<Item> weapons = new List<Item>();
-        foreach (Item i in equipped) {
-            if (i.isWeapon())
-                weapons.Add(i);
-        }
-        return weapons;
-    }
-
-    // Gets the currently used weapon
-    public Item getCurrentWeapon () {
-        return getEquippedWeapons()[0];
-    }
-
+  
     // Gets the position of the player
     public Vector3 getPos() {
         return curr_pos;
+    }
+
+    public Entity getEntity()
+    {
+        return entity;
+    }
+    public void setEntity(Entity e)
+    {
+        entity = e;
     }
 
 }
